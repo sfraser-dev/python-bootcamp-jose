@@ -3,7 +3,11 @@
 # Learn more about .gitignore:
 #     https://www.atlassian.com/git/tutorials/saving-changes/gitignore
 
+
 .ipynb_checkpoints/
+jupyter-notebooks-from-tutor/
+myfile.txt
+
 
 # Node artifact files
 node_modules/
