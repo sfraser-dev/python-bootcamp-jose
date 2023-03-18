@@ -13,7 +13,7 @@ def grid_construct():
 
 def check_input_value_in_valid_range(x):
     if x not in range(0,9):
-        print("error: input val must be in range 0-8, try again")
+        print("error: input val must be in range 1-9, try again")
         return False
     return True
 
@@ -25,11 +25,16 @@ def check_grid_location_unused(x,g):
 
 def human_turn(g):
     while True:
+        # input location grid for human    python loation grid
+        # 1 2 3                            0 1 2
+        # 4 5 6                            3 4 5
+        # 7 8 9                            6 7 8
         try:
-            user_input_val = int(input("human, please input a location in range 0-8: "))
+            user_input_val = int(input("human, please input a location in range 1-9: "))
         except ValueError:
-            print("that's not an int in range 0-8!")
+            print("input unrecognised, please try again!")
             continue
+        user_input_val -= 1     # python location grid
         valid_range = check_input_value_in_valid_range(user_input_val)
         if valid_range == False:
             continue
@@ -40,9 +45,10 @@ def human_turn(g):
         
 def computer_turn(g):
     while True: 
-        r = randint(0,8)    # return random int between 0 and 8 (including 0 and 8)
+        r = randint(1,9)    # return random int between 1 and 9 (including 1 and 9)
         print(f'computer selects position {r}')
         #input("hit enter to continue")
+        r -= 1                  # python location grid
         valid_range = check_input_value_in_valid_range(r)
         if valid_range == False:
             continue
