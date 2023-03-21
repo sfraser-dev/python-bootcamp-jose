@@ -8,8 +8,7 @@ def grid_print(grid):
     print("")
 
 def grid_construct():
-    grid = ['-','-','-','-','-','-','-','-','-']
-    return grid
+    return ['-','-','-','-','-','-','-','-','-']
 
 def check_input_value_in_valid_range(val):
     if val not in range(0,9):
@@ -57,7 +56,7 @@ def computer_turn(grid):
             grid[r_int] = 'O'
             return grid
 
-def check_if_all_Xs_or_all_Os(str_arr):
+def check_if_all_x_or_all_o(str_arr):
     if '-' in str_arr:
         return False
     # check all chars against the first char to see if all match
@@ -72,28 +71,28 @@ def check_rows_cols_diags_for_winner(grid):
     col3= [grid[2], grid[5], grid[8]]
     diag_nw_se = [grid[0], grid[4], grid[8]]
     diag_sw_ne = [grid[6], grid[4], grid[2]]
-    if check_if_all_Xs_or_all_Os(row1) is True:
+    if check_if_all_x_or_all_o(row1) is True:
         print(f"winner is {row1[0]}, game over!\n")
         sys.exit()
-    elif check_if_all_Xs_or_all_Os(row2) is True:
+    elif check_if_all_x_or_all_o(row2) is True:
         print(f"winner is {row2[0]}, game over!\n")
         sys.exit()
-    elif check_if_all_Xs_or_all_Os(row3) is True:
+    elif check_if_all_x_or_all_o(row3) is True:
         print(f"winner is {row3[0]}, game over!\n")
         sys.exit()
-    elif check_if_all_Xs_or_all_Os(col1) is True:
+    elif check_if_all_x_or_all_o(col1) is True:
         print(f"winner is {col1[0]}, game over!\n")
         sys.exit()
-    elif check_if_all_Xs_or_all_Os(col2) is True:
+    elif check_if_all_x_or_all_o(col2) is True:
         print(f"winner is {col2[0]}, game over!\n")
         sys.exit()
-    elif check_if_all_Xs_or_all_Os(col3) is True:
+    elif check_if_all_x_or_all_o(col3) is True:
         print(f"winner is {col3[0]}, game over!\n")
         sys.exit()
-    elif check_if_all_Xs_or_all_Os(diag_nw_se) is True:
+    elif check_if_all_x_or_all_o(diag_nw_se) is True:
         print(f"winner is {diag_nw_se[0]}, game over!\n")
         sys.exit()
-    elif check_if_all_Xs_or_all_Os(diag_sw_ne) is True:
+    elif check_if_all_x_or_all_o(diag_sw_ne) is True:
         print(f"winner is {diag_sw_ne[0]}, game over!\n")
         sys.exit()
     else:
@@ -116,6 +115,6 @@ def play_game(grid):
         check_rows_cols_diags_for_winner(grid)
         check_if_grid_full(grid)
 
-grid = grid_construct()
-grid_print(grid)
-play_game(grid)
+the_grid = grid_construct()
+grid_print(the_grid)
+play_game(the_grid)
