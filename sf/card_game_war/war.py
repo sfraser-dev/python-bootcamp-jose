@@ -5,7 +5,7 @@ class Card():
     def __init__(self, suit, rank, simple_strength_value) -> None:
         self.suit = suit
         self.rank = rank
-        self.simple_strength_value = simple_strength_value 
+        self.simple_strength_value = simple_strength_value
         self.shorthand = f'{self.suit}{self.rank}'
 
     def __str__(self) -> str:
@@ -81,75 +81,68 @@ class Deck():
         return the_str
 
 if __name__ == '__main__':
-    print_level = 1     #  <2 minimal, >=2 verbose 
+    PRINT_LEVEL = 1     #  <2 minimal, >=2 verbose
     deck = Deck()       # deck contains a list of Card objects
-    if print_level >= 2:
+    if PRINT_LEVEL >= 2:
         print('new deck:')
         print(deck)
     random.shuffle(deck.full_deck)
-    if print_level >= 2:
+    if PRINT_LEVEL >= 2:
         print('shuffled deck:')
         print(deck)
-    shuffled_list_of_card_objects = deck.get_deck()             
+    shuffled_list_of_card_objects = deck.get_deck()
     #shuffled_list_of_card_objects = shuffled_list_of_card_objects[0:18]    # for testing
     player1_all_cards = list(shuffled_list_of_card_objects[0::2])
     player2_all_cards = list(shuffled_list_of_card_objects[1::2])
-    if print_level >= 2:
+    if PRINT_LEVEL >= 2:
         print('---')
-        print(f'deck: ', end="")  
+        print('deck: ', end="")
         print(*shuffled_list_of_card_objects)
-        print(f'player1: ', end="")  
+        print('player1: ', end="")
         print(*player1_all_cards)
-        print(f'player2: ', end="")
+        print('player2: ', end="")
         print(*player2_all_cards)
-        print('')
+        print(' ')
 
-    loopcount = 0
-    play_game = True
-    while play_game:
+    LOOPCOUNT = 0
+    PLAY_GAME = True
+    while PLAY_GAME:
         if len(player1_all_cards) == 0:
             print('player 1 out of cards, player 2 wins')
             sys.exit()
-            play_game = False
-            break
 
         if len(player2_all_cards) == 0:
             print('player 2 out of cards, player 1 wins')
             sys.exit()
-            play_game = False
-            break
 
-        if print_level >= 2:
-            print(f'{loopcount} player1: ', end="")  
+        if PRINT_LEVEL >= 2:
+            print(f'{LOOPCOUNT} player1: ', end="")
             print(*player1_all_cards)
-            print(f'{loopcount} player2: ', end="")
+            print(f'{LOOPCOUNT} player2: ', end="")
             print(*player2_all_cards)
 
         # take a card from top of player's pile (list far right)
-        p1_curr_card = player1_all_cards.pop()          
-        p2_curr_card = player2_all_cards.pop()          
+        p1_curr_card = player1_all_cards.pop()
+        p2_curr_card = player2_all_cards.pop()
 
-        if print_level >= 2:
-            print(f'{loopcount} p1_curr_card: {p1_curr_card}, strength = {p1_curr_card.simple_strength_value}')
-            print(f'{loopcount} p2_curr_card: {p2_curr_card}, strength = {p2_curr_card.simple_strength_value}')
-            
+        if PRINT_LEVEL >= 2:
+            print(f'{LOOPCOUNT} p1_curr_card: {p1_curr_card}, strength = {p1_curr_card.simple_strength_value}')
+            print(f'{LOOPCOUNT} p2_curr_card: {p2_curr_card}, strength = {p2_curr_card.simple_strength_value}')
+
+        temp = [p1_curr_card, p2_curr_card]
+        # shuffle the discarded cards, never-ending game less likely
+        random.shuffle(temp)
         if p1_curr_card.simple_strength_value > p2_curr_card.simple_strength_value:
-            # add both cards to the bottom of player's pile (list far left)
-            temp = [p1_curr_card, p2_curr_card]
-            # shuffle the discarded cards, never-ending game less likely
-            random.shuffle(temp)    
-            player1_all_cards.insert(0, temp[0])   
-            player1_all_cards.insert(0, temp[1])    
+            # add both cards to the bottom of player1's pile (list far left)
+            player1_all_cards.insert(0, temp[0])
+            player1_all_cards.insert(0, temp[1])
         elif p1_curr_card.simple_strength_value < p2_curr_card.simple_strength_value:
-            temp = [p1_curr_card, p2_curr_card]
-            # shuffle the discarded cards, never-ending game less likely
-            random.shuffle(temp)    
-            player2_all_cards.insert(0, temp[0])   
-            player2_all_cards.insert(0, temp[1])    
+            player2_all_cards.insert(0, temp[0])
+            player2_all_cards.insert(0, temp[1])
         else: # war! cards equal
             print("--- it's war!")
-            at_war = True
-            while at_war:
+            AT_WAR = True
+            while AT_WAR:
                 repo = [p1_curr_card, p2_curr_card]
                 # draw an additional 3 cards from each player in war
                 if len(player1_all_cards) < 4:
@@ -169,17 +162,15 @@ if __name__ == '__main__':
                 p2_new_card = player2_all_cards.pop()
                 repo.append(p2_new_card)
                 # shuffle the discarded cards, never-ending game less likely
-                random.shuffle(repo)    
+                random.shuffle(repo)
                 if p1_new_card.simple_strength_value > p2_new_card.simple_strength_value:
                     for c in repo:
-                        player1_all_cards.insert(0, c) 
-                    at_war = False
-                    break
+                        player1_all_cards.insert(0, c)
+                    AT_WAR = False
                 elif p1_new_card.simple_strength_value < p2_new_card.simple_strength_value:
                     for c in repo:
-                        player2_all_cards.insert(0, c) 
-                    at_war = False
-                    break
+                        player2_all_cards.insert(0, c)
+                    AT_WAR = False
                 else:
                     # continue war
                     if len(player1_all_cards) ==  0:
@@ -191,16 +182,14 @@ if __name__ == '__main__':
                     p1_curr_card = player1_all_cards.pop()
                     p2_curr_card = player2_all_cards.pop()
 
-        if print_level >= 2:
-            print(f'{loopcount} player1: ', end="")  
+        if PRINT_LEVEL >= 2:
+            print(f'{LOOPCOUNT} player1: ', end="")
             print(*player1_all_cards)
-            print(f'{loopcount} player2: ', end="")
+            print(f'{LOOPCOUNT} player2: ', end="")
             print(*player2_all_cards)
         else:
-            print(f'loop {loopcount}')
+            print(f'loop {LOOPCOUNT}')
 
-        if print_level >= 2:
+        if PRINT_LEVEL >= 2:
             print(' ')
-        loopcount += 1
-
-    
+        LOOPCOUNT += 1
