@@ -86,30 +86,41 @@ class Player():
     def __str__(self) -> str:
         the_str = ''
         for card in self.cards_held:
-            the_str = the_str + card.shorthand + ' '
+            the_str = the_str + str(card) + ' '
         return the_str
 
-deck = Deck()       # deck contains a list of Card objects
-print('new deck:')
-print(deck)
-random.shuffle(deck.full_deck)
-print('shuffled deck:')
-print(deck)
-shuffled_list_of_card_objects = deck.get_deck()             
-player1 = Player(shuffled_list_of_card_objects[0::2])
-player2 = Player(shuffled_list_of_card_objects[1::2])
-print("player1's list of card objects")
-print(player1)
-print("player2's list of card objects")
-print(player2)
-battle_repo = []
-p1_card = player1.cards_held.pop() # take last card (right) from list
-p2_card = player2.cards_held.pop()
-print(player1)
-print(player2)
-print(p1_card)
-print(p2_card)
-player1.cards_held.insert(0,p1_card)
-player2.cards_held.insert(0,p2_card)
-print(player1)
-print(player2)
+if __name__ == '__main__':
+    deck = Deck()       # deck contains a list of Card objects
+    print('new deck:')
+    print(deck)
+    random.shuffle(deck.full_deck)
+    print('shuffled deck:')
+    print(deck)
+    print('')
+    shuffled_list_of_card_objects = deck.get_deck()             
+    player1 = Player(shuffled_list_of_card_objects[0::2])
+    player2 = Player(shuffled_list_of_card_objects[1::2])
+    print(f'player1: {player1}')
+    print(f'player2: {player2}')
+    print(player1.cards_held[0])
+
+    battle_repo = []
+    for x in range(0,200):
+        p1_card = player1.cards_held.pop()          # take a card from top of player1's pile (list far right)
+        p2_card = player2.cards_held.pop()          # take a card from top of player2's pile (list far right)
+        print(f'p1_card: {p1_card}, strength = {p1_card.simple_strength_value}')
+        print(f'p2_card: {p2_card}, strength = {p2_card.simple_strength_value}')
+        if p1_card.simple_strength_value > p2_card.simple_strength_value:
+            player1.cards_held.insert(0, p1_card)   # add both cards to the bottom of player1's pile (list far left)
+            player1.cards_held.insert(0, p2_card)    
+        elif p1_card.simple_strength_value < p2_card.simple_strength_value:
+            player2.cards_held.insert(0, p1_card)   # add both cards to the bottom of player2's pile (list far left)
+            player2.cards_held.insert(0, p2_card)    
+        else:                                                  
+            battle_repo.append(p1_card)             # add both cards to the repo
+            battle_repo.append(p2_card)  
+        
+        #input("hit enter") 
+        print(f'player1: {player1}')
+        print(f'player2: {player2}')
+    
