@@ -1,4 +1,8 @@
 import random
+import sys
+
+player1_all_cards = []
+player2_all_cards = []
 
 class Card():
     def __init__(self, suit, rank, simple_strength_value) -> None:
@@ -79,20 +83,40 @@ class Deck():
             the_str = the_str + card.shorthand + ' '
         return the_str
 
-def war(repo, p1_card, p2_card):
-    if p1_card.simple_strength_value > p2_card.simple_strength_value:
-        repo.append(p1_card)
-        repo.append(p2_card)
-        winner_str = 'p1wins'
-    elif p1_card.simple_strength_value < p2_card.simple_strength_value:
-        repo.append(p1_card)
-        repo.append(p2_card)
-        winner_str = 'p2wins'
-    else:
-        winner_str = 'draw'
+def war(p1_equal_card, p2_equal_card):
+    global player1_all_cards
+    global player2_all_cards
+    war_repo = []
+
+    while True:
+        # add the current (equal) cards to the repo
+        war_repo.append(p1_equal_card)
+        war_repo.append(p2_equal_card)
+        # add another card from each player to the repo
+        check_for_winner_before_pop(player1_all_cards, player2_all_cards)
+        war_repo.append(player1_all_cards.pop())
+        war_repo.append(player2_all_cards.pop())
+        # get the new comparison cards from each player
+        check_for_winner_before_pop(player1_all_cards, player2_all_cards)
+        p1_new_card = player1_all_cards.pop()
+        p2_new_card = player2_all_cards.pop()
+        if p1_new_card.simple_strength_value > p2_new_card.simple_strength_value:
+            war_repo.append(p1_new_card)
+            war_repo.append(p2_new_card)
+            winner_str = 'p1wins'
+            break
+        elif p1_new_card.simple_strength_value < p2_new_card.simple_strength_value:
+            war_repo.append(p1_new_card)
+            war_repo.append(p2_new_card)
+            winner_str = 'p2wins'
+            break
+        else:
+            p1_equal_card = p1_curr_card
+            p2_equal_card = p2_curr_card
+
     print('war_repo: ', end="")
-    print(*repo)
-    return [winner_str, repo]
+    print(*war_repo)
+    return [winner_str, war_repo]
 
 def check_for_winner_before_pop(p1_cards, p2_cards):
     winner_found = False
@@ -102,7 +126,8 @@ def check_for_winner_before_pop(p1_cards, p2_cards):
     elif len(p2_cards) == 0:
             print('player 2 has no cards left, player 1 wins!')
             winner_found = True
-    return winner_found 
+    if winner_found:
+        sys.exit() 
 
 if __name__ == '__main__':
     deck = Deck()       # deck contains a list of Card objects
@@ -114,61 +139,44 @@ if __name__ == '__main__':
     print('')
     shuffled_list_of_card_objects = deck.get_deck()             
     #shuffled_list_of_card_objects = shuffled_list_of_card_objects[0:21]
-    player1_cards = list(shuffled_list_of_card_objects[0::2])
-    player2_cards = list(shuffled_list_of_card_objects[1::2])
+    #c2 = Card('c','2',2)
+    #h3 = Card('h','3',3)
+    #d5 = Card('d','5',5)
+    #s9 = Card('s','9',9)
+    #shuffled_list_of_card_objects = [c2, h3, s9, d5, h3, c2, s9, s9, c2, d5, h3, s9, c2, c2, h3, d5]
+    player1_all_cards = list(shuffled_list_of_card_objects[0::2])
+    player2_all_cards = list(shuffled_list_of_card_objects[1::2])
 
-    battle_repo = []
     loopcount = 0
     while True:
-        # take a card from top of player's pile (list far right)
-        game_over = check_for_winner_before_pop(player1_cards, player2_cards)
-        if game_over:
-            break
-        p1_card = player1_cards.pop()          
-        p2_card = player2_cards.pop()          
-        print(f'{loopcount} p1_card: {p1_card}, strength = {p1_card.simple_strength_value}')
-        print(f'{loopcount} p2_card: {p2_card}, strength = {p2_card.simple_strength_value}')
-        if p1_card.simple_strength_value > p2_card.simple_strength_value:
-            # add both cards to the bottom of player's pile (list far left)
-            player1_cards.insert(0, p1_card)   
-            player1_cards.insert(0, p2_card)    
-        elif p1_card.simple_strength_value < p2_card.simple_strength_value:
-            player2_cards.insert(0, p1_card)   
-            player2_cards.insert(0, p2_card)    
-        else: # war!                                                  
-            # add the two equal cards to the repo
-            battle_repo.append(p1_card)             
-            battle_repo.append(p2_card)  
-            # also add another card from each player to the repo
-            game_over = check_for_winner_before_pop(player1_cards, player2_cards)
-            if game_over:
-                break
-            battle_repo.append(player1_cards.pop())
-            battle_repo.append(player2_cards.pop())
-            # war
-            game_over = check_for_winner_before_pop(player1_cards, player2_cards)
-            if game_over:
-                break
-            result = war(battle_repo, player1_cards.pop(), player2_cards.pop())
-            war_repo = result[1]
-            if result[0] == 'p1wins':
-                for x in war_repo:
-                    player1_cards.insert(0, x)
-                battle_repo = []
-            elif result[0] == 'p2wins':
-                for x in war_repo:
-                    player2_cards.insert(0, x)
-                battle_repo = []
-            elif result[0] == 'draw':
-                battle_repo = result[1]
-        
-        #input("hit enter") 
         print(f'{loopcount} player1: ', end="")  
-        print(*player1_cards)
+        print(*player1_all_cards)
         print(f'{loopcount} player2: ', end="")
-        print(*player2_cards)
-        print('repo: ', end="")
-        print(*battle_repo)
+        print(*player2_all_cards)
+        print(' ')
+        
+        # take a card from top of player's pile (list far right)
+        game_over = check_for_winner_before_pop(player1_all_cards, player2_all_cards)
+        p1_curr_card = player1_all_cards.pop()          
+        p2_curr_card = player2_all_cards.pop()          
+        print(f'{loopcount} p1_card: {p1_curr_card}, strength = {p1_curr_card.simple_strength_value}')
+        print(f'{loopcount} p2_card: {p2_curr_card}, strength = {p2_curr_card.simple_strength_value}')
+        if p1_curr_card.simple_strength_value > p2_curr_card.simple_strength_value:
+            # add both cards to the bottom of player's pile (list far left)
+            player1_all_cards.insert(0, p1_curr_card)   
+            player1_all_cards.insert(0, p2_curr_card)    
+        elif p1_curr_card.simple_strength_value < p2_curr_card.simple_strength_value:
+            player2_all_cards.insert(0, p1_curr_card)   
+            player2_all_cards.insert(0, p2_curr_card)    
+        else: # war!                                                  
+            result = war(p1_curr_card, p2_curr_card)
+            returned_war_repo = result[1]
+            if result[0] == 'p1wins':
+                for x in returned_war_repo:
+                    player1_all_cards.insert(0, x)
+            elif result[0] == 'p2wins':
+                for x in returned_war_repo:
+                    player2_all_cards.insert(0, x)
 
         loopcount += 1
 
