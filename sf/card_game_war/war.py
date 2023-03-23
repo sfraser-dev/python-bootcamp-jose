@@ -1,9 +1,6 @@
 import random
 import sys
 
-player1_all_cards = []
-player2_all_cards = []
-
 class Card():
     def __init__(self, suit, rank, simple_strength_value) -> None:
         self.suit = suit
@@ -83,101 +80,127 @@ class Deck():
             the_str = the_str + card.shorthand + ' '
         return the_str
 
-def war(p1_equal_card, p2_equal_card):
-    global player1_all_cards
-    global player2_all_cards
-    war_repo = []
-
-    while True:
-        # add the current (equal) cards to the repo
-        war_repo.append(p1_equal_card)
-        war_repo.append(p2_equal_card)
-        # add another card from each player to the repo
-        check_for_winner_before_pop(player1_all_cards, player2_all_cards)
-        war_repo.append(player1_all_cards.pop())
-        war_repo.append(player2_all_cards.pop())
-        # get the new comparison cards from each player
-        check_for_winner_before_pop(player1_all_cards, player2_all_cards)
-        p1_new_card = player1_all_cards.pop()
-        p2_new_card = player2_all_cards.pop()
-        if p1_new_card.simple_strength_value > p2_new_card.simple_strength_value:
-            war_repo.append(p1_new_card)
-            war_repo.append(p2_new_card)
-            winner_str = 'p1wins'
-            break
-        elif p1_new_card.simple_strength_value < p2_new_card.simple_strength_value:
-            war_repo.append(p1_new_card)
-            war_repo.append(p2_new_card)
-            winner_str = 'p2wins'
-            break
-        else:
-            p1_equal_card = p1_curr_card
-            p2_equal_card = p2_curr_card
-
-    print('war_repo: ', end="")
-    print(*war_repo)
-    return [winner_str, war_repo]
-
-def check_for_winner_before_pop(p1_cards, p2_cards):
-    winner_found = False
-    if len(p1_cards) == 0:
-            print('player 1 has no cards left, player 2 wins!')
-            winner_found = True
-    elif len(p2_cards) == 0:
-            print('player 2 has no cards left, player 1 wins!')
-            winner_found = True
-    if winner_found:
-        sys.exit() 
-
 if __name__ == '__main__':
+    print_level = 1     #  <2 minimal, >=2 verbose 
     deck = Deck()       # deck contains a list of Card objects
-    print('new deck:')
-    print(deck)
+    if print_level >= 2:
+        print('new deck:')
+        print(deck)
     random.shuffle(deck.full_deck)
-    print('shuffled deck:')
-    print(deck)
-    print('')
+    if print_level >= 2:
+        print('shuffled deck:')
+        print(deck)
     shuffled_list_of_card_objects = deck.get_deck()             
-    #shuffled_list_of_card_objects = shuffled_list_of_card_objects[0:21]
-    #c2 = Card('c','2',2)
-    #h3 = Card('h','3',3)
-    #d5 = Card('d','5',5)
-    #s9 = Card('s','9',9)
-    #shuffled_list_of_card_objects = [c2, h3, s9, d5, h3, c2, s9, s9, c2, d5, h3, s9, c2, c2, h3, d5]
+    #shuffled_list_of_card_objects = shuffled_list_of_card_objects[0:18]    # for testing
     player1_all_cards = list(shuffled_list_of_card_objects[0::2])
     player2_all_cards = list(shuffled_list_of_card_objects[1::2])
+    if print_level >= 2:
+        print('---')
+        print(f'deck: ', end="")  
+        print(*shuffled_list_of_card_objects)
+        print(f'player1: ', end="")  
+        print(*player1_all_cards)
+        print(f'player2: ', end="")
+        print(*player2_all_cards)
+        print('')
 
     loopcount = 0
-    while True:
-        print(f'{loopcount} player1: ', end="")  
-        print(*player1_all_cards)
-        print(f'{loopcount} player2: ', end="")
-        print(*player2_all_cards)
-        print(' ')
-        
+    play_game = True
+    while play_game:
+        if len(player1_all_cards) == 0:
+            print('player 1 out of cards, player 2 wins')
+            sys.exit()
+            play_game = False
+            break
+
+        if len(player2_all_cards) == 0:
+            print('player 2 out of cards, player 1 wins')
+            sys.exit()
+            play_game = False
+            break
+
+        if print_level >= 2:
+            print(f'{loopcount} player1: ', end="")  
+            print(*player1_all_cards)
+            print(f'{loopcount} player2: ', end="")
+            print(*player2_all_cards)
+
         # take a card from top of player's pile (list far right)
-        game_over = check_for_winner_before_pop(player1_all_cards, player2_all_cards)
         p1_curr_card = player1_all_cards.pop()          
         p2_curr_card = player2_all_cards.pop()          
-        print(f'{loopcount} p1_card: {p1_curr_card}, strength = {p1_curr_card.simple_strength_value}')
-        print(f'{loopcount} p2_card: {p2_curr_card}, strength = {p2_curr_card.simple_strength_value}')
+
+        if print_level >= 2:
+            print(f'{loopcount} p1_curr_card: {p1_curr_card}, strength = {p1_curr_card.simple_strength_value}')
+            print(f'{loopcount} p2_curr_card: {p2_curr_card}, strength = {p2_curr_card.simple_strength_value}')
+            
         if p1_curr_card.simple_strength_value > p2_curr_card.simple_strength_value:
             # add both cards to the bottom of player's pile (list far left)
-            player1_all_cards.insert(0, p1_curr_card)   
-            player1_all_cards.insert(0, p2_curr_card)    
+            temp = [p1_curr_card, p2_curr_card]
+            # shuffle the discarded cards, never-ending game less likely
+            random.shuffle(temp)    
+            player1_all_cards.insert(0, temp[0])   
+            player1_all_cards.insert(0, temp[1])    
         elif p1_curr_card.simple_strength_value < p2_curr_card.simple_strength_value:
-            player2_all_cards.insert(0, p1_curr_card)   
-            player2_all_cards.insert(0, p2_curr_card)    
-        else: # war!                                                  
-            result = war(p1_curr_card, p2_curr_card)
-            returned_war_repo = result[1]
-            if result[0] == 'p1wins':
-                for x in returned_war_repo:
-                    player1_all_cards.insert(0, x)
-            elif result[0] == 'p2wins':
-                for x in returned_war_repo:
-                    player2_all_cards.insert(0, x)
+            temp = [p1_curr_card, p2_curr_card]
+            # shuffle the discarded cards, never-ending game less likely
+            random.shuffle(temp)    
+            player2_all_cards.insert(0, temp[0])   
+            player2_all_cards.insert(0, temp[1])    
+        else: # war! cards equal
+            print("--- it's war!")
+            at_war = True
+            while at_war:
+                repo = [p1_curr_card, p2_curr_card]
+                # draw an additional 3 cards from each player in war
+                if len(player1_all_cards) < 4:
+                    print('player 1 out of cards, player 2 wins')
+                    sys.exit()
+                if len(player2_all_cards) < 4:
+                    print('player 2 out of cards, player 1 wins')
+                    sys.exit()
+                repo.append(player1_all_cards.pop())
+                repo.append(player1_all_cards.pop())
+                repo.append(player1_all_cards.pop())
+                p1_new_card = player1_all_cards.pop()
+                repo.append(p1_new_card)
+                repo.append(player2_all_cards.pop())
+                repo.append(player2_all_cards.pop())
+                repo.append(player2_all_cards.pop())
+                p2_new_card = player2_all_cards.pop()
+                repo.append(p2_new_card)
+                # shuffle the discarded cards, never-ending game less likely
+                random.shuffle(repo)    
+                if p1_new_card.simple_strength_value > p2_new_card.simple_strength_value:
+                    for c in repo:
+                        player1_all_cards.insert(0, c) 
+                    at_war = False
+                    break
+                elif p1_new_card.simple_strength_value < p2_new_card.simple_strength_value:
+                    for c in repo:
+                        player2_all_cards.insert(0, c) 
+                    at_war = False
+                    break
+                else:
+                    # continue war
+                    if len(player1_all_cards) ==  0:
+                        print('player 1 out of cards, player 2 wins')
+                        sys.exit()
+                    if len(player2_all_cards) ==  0:
+                        print('player 2 out of cards, player 1 wins')
+                        sys.exit()
+                    p1_curr_card = player1_all_cards.pop()
+                    p2_curr_card = player2_all_cards.pop()
 
+        if print_level >= 2:
+            print(f'{loopcount} player1: ', end="")  
+            print(*player1_all_cards)
+            print(f'{loopcount} player2: ', end="")
+            print(*player2_all_cards)
+        else:
+            print(f'loop {loopcount}')
+
+        if print_level >= 2:
+            print(' ')
         loopcount += 1
 
     
