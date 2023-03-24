@@ -1,0 +1,122 @@
+import random
+
+class Card():
+    def __init__(self, suit, rank, simple_strength_value) -> None:
+        self.suit = suit
+        self.rank = rank
+        self.simple_strength_value = simple_strength_value
+        self.shorthand = f'{self.suit}{self.rank}'
+
+    def __str__(self) -> str:
+        return self.shorthand
+
+class Deck():
+    def __init__(self) -> None:
+        self.c2 = Card('c', '2', 2)
+        self.c3 = Card('c', '3', 3)
+        self.c4 = Card('c', '4', 4)
+        self.c5 = Card('c', '5', 5)
+        self.c6 = Card('c', '6', 6)
+        self.c7 = Card('c', '7', 7)
+        self.c8 = Card('c', '8', 8)
+        self.c9 = Card('c', '9', 9)
+        self.ct = Card('c', 'T', 10)
+        self.cj = Card('c', 'J', 10)
+        self.cq = Card('c', 'Q', 10)
+        self.ck = Card('c', 'K', 10)
+        self.ca = Card('c', 'A', 11)
+        self.d2 = Card('d', '2', 2)
+        self.d3 = Card('d', '3', 3)
+        self.d4 = Card('d', '4', 4)
+        self.d5 = Card('d', '5', 5)
+        self.d6 = Card('d', '6', 6)
+        self.d7 = Card('d', '7', 7)
+        self.d8 = Card('d', '8', 8)
+        self.d9 = Card('d', '9', 9)
+        self.dt = Card('d', 'T', 10)
+        self.dj = Card('d', 'J', 10)
+        self.dq = Card('d', 'Q', 10)
+        self.dk = Card('d', 'K', 10)
+        self.da = Card('d', 'A', 11)
+        self.h2 = Card('h', '2', 2)
+        self.h3 = Card('h', '3', 3)
+        self.h4 = Card('h', '4', 4)
+        self.h5 = Card('h', '5', 5)
+        self.h6 = Card('h', '6', 6)
+        self.h7 = Card('h', '7', 7)
+        self.h8 = Card('h', '8', 8)
+        self.h9 = Card('h', '9', 9)
+        self.ht = Card('h', 'T', 10)
+        self.hj = Card('h', 'J', 10)
+        self.hq = Card('h', 'Q', 10)
+        self.hk = Card('h', 'K', 10)
+        self.ha = Card('h', 'A', 11)
+        self.s2 = Card('s', '2', 2)
+        self.s3 = Card('s', '3', 3)
+        self.s4 = Card('s', '4', 4)
+        self.s5 = Card('s', '5', 5)
+        self.s6 = Card('s', '6', 6)
+        self.s7 = Card('s', '7', 7)
+        self.s8 = Card('s', '8', 8)
+        self.s9 = Card('s', '9', 9)
+        self.st = Card('s', 'T', 10)
+        self.sj = Card('s', 'J', 10)
+        self.sq = Card('s', 'Q', 10)
+        self.sk = Card('s', 'K', 10)
+        self.sa = Card('s', 'A', 11)
+        # a deck (list) of card classes
+        self.full_deck  = [self.c2,self.c3,self.c4,self.c5,self.c6,self.c7,self.c8,self.c9,self.ct,self.cj,self.cq,self.ck,self.ca]
+        self.full_deck += [self.d2,self.d3,self.d4,self.d5,self.d6,self.d7,self.d8,self.d9,self.dt,self.dj,self.dq,self.dk,self.da]
+        self.full_deck += [self.h2,self.h3,self.h4,self.h5,self.h6,self.h7,self.h8,self.h9,self.ht,self.hj,self.hq,self.hk,self.ha]
+        self.full_deck += [self.s2,self.s3,self.s4,self.s5,self.s6,self.s7,self.s8,self.s9,self.st,self.sj,self.sq,self.sk,self.sa]
+
+    def __str__(self) -> str:
+        the_str = ''
+        for card in self.full_deck:
+            the_str = the_str + card.shorthand + ' '
+        return the_str
+
+class Hand():
+    def __init__(self, person, card1, card2) -> None:
+        self.person = person
+        self.card1 = card1
+        self.card2 = card2
+
+    def __str__(self):
+        return (f'{self.person}: {self.card1} {self.card2}')
+
+class Money():
+    def __init__(self, amount) -> None:
+        self.amount = amount
+    
+    def get_money(self):
+        return self.amount
+    
+    def set_money(self, val):
+        self.amount = val
+
+    def __str__(self):
+        return (f'${self.amount}')
+
+if __name__ == '__main__':
+    # get a deck of cards and shuffle it
+    deck = Deck()
+    print(deck)
+    random.shuffle(deck.full_deck)
+    print(deck)
+    
+    # deal the first two cards to player and the dealer
+    card_one = deck.full_deck.pop()
+    card_two = deck.full_deck.pop()
+    card_three = deck.full_deck.pop()
+    card_four = deck.full_deck.pop()
+    player_hand = Hand('player', card_one, card_three)
+    dealer_hand = Hand('dealer', card_two, card_four)
+    print(player_hand)
+    print(dealer_hand)
+
+    # player's money
+    money = Money(20)
+    print(f'{money}')
+
+
