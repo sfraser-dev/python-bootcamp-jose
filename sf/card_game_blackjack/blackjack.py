@@ -1,15 +1,5 @@
 import random
 
-class Card():
-    def __init__(self, suit, rank, simple_strength_value) -> None:
-        self.suit = suit
-        self.rank = rank
-        self.simple_strength_value = simple_strength_value
-        self.shorthand = f'{self.suit}{self.rank}'
-
-    def __str__(self) -> str:
-        return self.shorthand
-
 class Deck():
     def __init__(self) -> None:
         self.c2 = Card('c', '2', 2)
@@ -76,28 +66,51 @@ class Deck():
             the_str = the_str + card.shorthand + ' '
         return the_str
 
+class Card():
+    def __init__(self, suit, rank, simple_strength_value) -> None:
+        self.suit = suit
+        self.rank = rank
+        self.simple_strength_value = simple_strength_value
+        self.shorthand = f'{self.suit}{self.rank}'
+
+    def __str__(self) -> str:
+        return self.shorthand
+
 class Hand():
-    def __init__(self, person, card1, card2) -> None:
-        self.person = person
-        self.card1 = card1
-        self.card2 = card2
+    def __init__(self, owner, card1, card2) -> None:
+        self.owner = owner
+        self.hand = [card1, card2]
+        self.total = 0
+        for c in self.hand:
+            self.total += c.simple_strength_value
 
     def __str__(self):
-        return (f'{self.person}: {self.card1} {self.card2}')
+        str1 = (f'{self.owner}: ')
+        str2=''
+        for c in self.hand:
+            str2 += str(c) 
+            str2 += ' '
+        str3 = str(self.total)
+        str4 = str1 + str2 + '(' + str(self.total) + ')'
+        return str4
+
+    def twist(self, new_card):
+        self.new_card = new_card
+
 
 class Money():
     def __init__(self, amount) -> None:
         self.amount = amount
     
+    def __str__(self):
+        return (f'${self.amount}')
+
     def get_money(self):
         return self.amount
     
     def set_money(self, val):
         self.amount = val
-
-    def __str__(self):
-        return (f'${self.amount}')
-
+    
 if __name__ == '__main__':
     # get a deck of cards and shuffle it
     deck = Deck()
@@ -105,7 +118,7 @@ if __name__ == '__main__':
     random.shuffle(deck.full_deck)
     print(deck)
     
-    # deal the first two cards to player and the dealer
+    # deal the first two cards to player and the dealer (hide one of the dealer's cards)
     card_one = deck.full_deck.pop()
     card_two = deck.full_deck.pop()
     card_three = deck.full_deck.pop()
@@ -113,10 +126,26 @@ if __name__ == '__main__':
     player_hand = Hand('player', card_one, card_three)
     dealer_hand = Hand('dealer', card_two, card_four)
     print(player_hand)
-    print(dealer_hand)
+    print(f'dealer: {dealer_hand.hand[0]} XX')
 
     # player's money
     money = Money(20)
-    print(f'{money}')
+    print(f'player money: ${money.get_money()}')
+
+    lets_play_blackjack = True
+    while lets_play_blackjack == True:
+        # get user choice to stick or twist
+        while True:
+            try:
+                stick_or_twist = input("stick 's' or twist 't'? ")
+                if stick_or_twist == 's' or stick_or_twist == 't': 
+                    break
+                else:
+                    print("input either 's' to stick or 't' to twist")
+                    continue
+            except:
+                print("input either 's' to stick or 't' to twist")
+                continue
+        break
 
 
