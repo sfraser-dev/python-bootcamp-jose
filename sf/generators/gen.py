@@ -57,10 +57,16 @@ print(next(generator_object))
 s = 'hello'
 # cannot do "next(s)"", get error "str object is not an iterator"
 #next(s)
-s_iter = iter(s)
+s_iter = iter(s) 
 print(next(s_iter))
 print(next(s_iter))
 print(next(s_iter))
 print(next(s_iter))
 print(next(s_iter))
 
+# list comprehensions
+my_list = [1,3,5,9,2,6]
+filtered_list = [x for x in my_list if x>3] # filtered_list is a list
+print(filtered_list)
+# generator comprehensions (same syntax as list comprehensions except () brakets, not [] brackets)
+filtered_gen = (x for x in my_list if x>3) # filtered_gen is an iterator we can use next on, memory efficient 
