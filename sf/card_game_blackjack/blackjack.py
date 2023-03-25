@@ -80,9 +80,10 @@ class Hand():
     def __init__(self, owner, card1, card2) -> None:
         self.owner = owner
         self.the_cards = [card1, card2]
-        self.total = 0
+        self.score = 0
+        self.aces_counter = 0
         for c in self.the_cards:
-            self.total += c.simple_strength_value
+            self.score+= c.simple_strength_value
 
     def __str__(self):
         str1 = (f'{self.owner}: ')
@@ -90,13 +91,21 @@ class Hand():
         for c in self.the_cards:
             str2 += str(c) 
             str2 += ' '
-        str3 = str(self.total)
-        str4 = str1 + str2 + '(' + str(self.total) + ')'
+        str3 = str(self.score)
+        str4 = str1 + str2 + '(' + str(self.score) + ')'
         return str4
 
     def twist(self, new_card):
         self.the_cards.append(new_card)
-        self.total += new_card.simple_strength_value
+        # handle aces
+        if new_card.rank == 'A':
+            self.aces_counter += 1
+        self.score += new_card.simple_strength_value
+    
+    def adjust_score_for_aces(self):
+        while self.score > 21 and self.aces_counter > 0:
+            self.score -= 10
+            self.aces_counter -= 1
 
 class Money():
     def __init__(self, amount) -> None:
@@ -111,38 +120,48 @@ class Money():
     def set_money(self, val):
         self.amount = val
 
-def lets_play_blackjack(hand, deck):
+def human_play_blackjack(hand, deck):
     print(hand)
-    your_turn = True
-    while your_turn:
-        # get user choice to stick or twist
+    if hand.score >= 21:
+        return hand.score
+
+    # human gameplay loop
+    while True:
+        # checking user input loop
         while True:
-            try:
+            try: # possibly an exception from this block
                 stick_or_twist = input("stick 's' or twist 't'? ")
-                if stick_or_twist == 's' or stick_or_twist == 't': 
+                if stick_or_twist.lower() == 's' or stick_or_twist.lower() == 't': 
                     break
-                else:
-                    print("input either 's' to stick or 't' to twist")
-                    continue
-            except:
+            except Exception as e: # handle exception if thrown
+                print(e)
+                continue
+            else: # if no exception thrown, exceute this block
                 print("input either 's' to stick or 't' to twist")
                 continue
-        if stick_or_twist == 's':
-            print(f'{hand.owner} total is: {hand.total}')
-            return
-        else:
-            new_card = deck.full_deck.pop()
-            hand.twist(new_card)
-            print(hand)
-            continue
 
-    
+        if stick_or_twist == 's':
+            return hand.score
+        else:
+            hand.twist(deck.full_deck.pop())
+            hand.adjust_score_for_aces()
+            print(hand)
+            if hand.score >= 21:
+                return hand.score
+
+def dealer_play_blackjack(hand, deck):
+    # dealer gameplay loop
+    while True:
+        print(hand)
+        if hand.score >= 17:
+            return hand.score
+        hand.twist(deck.full_deck.pop())
+        hand.adjust_score_for_aces()
+
 if __name__ == '__main__':
     # get a deck of cards and shuffle it
     deck = Deck()
-    print(deck)
     random.shuffle(deck.full_deck)
-    print(deck)
     
     # deal the first two cards to player and the dealer (hide one of the dealer's cards)
     card_one = deck.full_deck.pop()
@@ -151,14 +170,46 @@ if __name__ == '__main__':
     card_four = deck.full_deck.pop()
     player_hand = Hand('player', card_one, card_three)
     dealer_hand = Hand('dealer', card_two, card_four)
-    print(player_hand)
-    print(f'dealer: {dealer_hand.the_cards[0]} XX')
 
     # player's money
     money = Money(20)
     print(f'player money: ${money.get_money()}')
     print('')
 
-    lets_play_blackjack(player_hand, deck)
+    # keep playing games of blackjack loop
+    play_again_loop = True
+    while play_again_loop == True:
+        human_score = human_play_blackjack(player_hand, deck)
+        print(f'--{player_hand.owner} score is: {player_hand.score}')
+        if (human_score) > 21:
+            print('player bust - dealer wins!\n')
+            continue
+        else:
+            dealer_score = dealer_play_blackjack(dealer_hand, deck)
+            print(f'--{dealer_hand.owner} score is: {dealer_hand.score}')
+            if dealer_score > 21:
+                print('dealer bust - player wins!\n')
+
+        print(f'player has {player_hand.score}, dealer has {dealer_hand.score}')
+        if (human_score > dealer_score):
+            print('player wins!\n')
+        else:
+            print('dealer wins!\n')
+
+        # checking user input loop
+        while True:
+            try: # possibly an exception from this block
+                again = input('want to play again? y or n: ')
+                if again.lower() == 'y' or again.lower() == 'n':
+                    break
+            except Exception as e: # handle exception if thrown 
+                print(e) 
+                continue
+            else: # if no exception thrown, exceute this block
+                print('please input y or n') 
+                continue
+
+        if again == 'n':
+            play_again_loop = False
 
 
