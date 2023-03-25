@@ -113,15 +113,19 @@ class Money():
     
     def __str__(self):
         return (f'${self.amount}')
-
-    def get_money(self):
-        return self.amount
     
-    def set_money(self, val):
-        self.amount = val
+    def decrease_amount(self, val):
+        self.amount -= val    
+        print(f'player has ${self.amount}')
+
+    def increase_amount(self, val):
+        self.amount += val
+        print(f'player has ${self.amount}')
+
 
 def human_play_blackjack(hand, deck):
     print(hand)
+
     if hand.score >= 21:
         return hand.score
 
@@ -158,45 +162,58 @@ def dealer_play_blackjack(hand, deck):
         hand.twist(deck.full_deck.pop())
         hand.adjust_score_for_aces()
 
-if __name__ == '__main__':
-    # get a deck of cards and shuffle it
-    deck = Deck()
-    random.shuffle(deck.full_deck)
-    
-    # deal the first two cards to player and the dealer (hide one of the dealer's cards)
-    card_one = deck.full_deck.pop()
-    card_two = deck.full_deck.pop()
-    card_three = deck.full_deck.pop()
-    card_four = deck.full_deck.pop()
-    player_hand = Hand('player', card_one, card_three)
-    dealer_hand = Hand('dealer', card_two, card_four)
+def check_for_immediate_blackjack(hand):
+    if hand.score == 21:
+        return True
 
+if __name__ == '__main__':
     # player's money
-    money = Money(20)
-    print(f'player money: ${money.get_money()}')
-    print('')
+    player_money = Money(10)
+    print(f'player has {player_money.amount}')
+    bet_per_game = 2
 
     # keep playing games of blackjack loop
     play_again_loop = True
     while play_again_loop == True:
+        # get a deck of cards and shuffle it
+        deck = Deck()
+        random.shuffle(deck.full_deck)
+        # deal the first two cards to player and the dealer (hide one of the dealer's cards)
+        card_one = deck.full_deck.pop()
+        card_two = deck.full_deck.pop()
+        card_three = deck.full_deck.pop()
+        card_four = deck.full_deck.pop()
+        player_hand = Hand('player', card_one, card_three)
+        dealer_hand = Hand('dealer', card_two, card_four)
+        # show one of the dealer's cards
+        print(f"dealer's hand: {dealer_hand.the_cards[0].shorthand} XX")
+
         human_score = human_play_blackjack(player_hand, deck)
         print(f'--{player_hand.owner} score is: {player_hand.score}')
         if (human_score) > 21:
-            print('player bust - dealer wins!\n')
-            continue
+            print('player bust - dealer wins!')
+            player_money.decrease_amount(bet_per_game)
         else:
             dealer_score = dealer_play_blackjack(dealer_hand, deck)
             print(f'--{dealer_hand.owner} score is: {dealer_hand.score}')
             if dealer_score > 21:
-                print('dealer bust - player wins!\n')
+                print('dealer bust - player wins!')
+                player_money.increase_amount(bet_per_game)
 
-        print(f'player has {player_hand.score}, dealer has {dealer_hand.score}')
-        if (human_score > dealer_score):
-            print('player wins!\n')
-        else:
-            print('dealer wins!\n')
+        if human_score <= 21 and dealer_score <= 21:
+            print(f'player has {player_hand.score}, dealer has {dealer_hand.score}')
+            if (human_score > dealer_score):
+                print('player wins!')
+                player_money.increase_amount(bet_per_game)
+            else:
+                print('dealer wins!')
+                player_money.decrease_amount(bet_per_game)
 
-        # checking user input loop
+        if player_money.amount < bet_per_game:
+            print("player doesn't have enough money to play - the casino always wins - bye!")
+            break
+        print('')
+        # checking user input loop to see if they want to continue playing
         while True:
             try: # possibly an exception from this block
                 again = input('want to play again? y or n: ')
