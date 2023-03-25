@@ -162,10 +162,11 @@ def dealer_play_blackjack(hand, deck):
         hand.twist(deck.full_deck.pop())
         hand.adjust_score_for_aces()
 
-def check_for_immediate_blackjack(hand):
-    if hand.score == 21:
+def check_for_two_card_21(hand):
+    if len(hand.the_cards) == 2 and hand.score == 21:
         return True
-
+    else:
+        return False
 
 if __name__ == '__main__':
     # player's money
@@ -184,19 +185,14 @@ if __name__ == '__main__':
         card_two = deck.full_deck.pop()
         card_three = deck.full_deck.pop()
         card_four = deck.full_deck.pop()
-
-        card_one = Card('c','10',10)
-        card_two = Card('d','10',10)
-        card_three = Card('h','A',10)
-        card_four = Card('s','A',10)
-
         player_hand = Hand('player', card_one, card_three)
         dealer_hand = Hand('dealer', card_two, card_four)
         # show one of the dealer's cards
         print(f"dealer's hand: {dealer_hand.the_cards[0].shorthand} XX")
 
-        player_immediate_21 = check_for_immediate_blackjack(player_hand)
-        dealer_immediate_21 = check_for_immediate_blackjack(dealer_hand)
+        # checking to see if player wins immediately for having blackjack
+        player_immediate_21 = check_for_two_card_21(player_hand)
+        dealer_immediate_21 = check_for_two_card_21(dealer_hand)
         if player_immediate_21 == True:
             if dealer_immediate_21 == True:
                 print('player and dealer both get immediate blackjack - draw')
