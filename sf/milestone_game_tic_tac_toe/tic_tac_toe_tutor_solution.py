@@ -19,7 +19,16 @@ def player_input():
     marker = ''
     
     while not (marker == 'X' or marker == 'O'):
-        marker = input('Player 1: Do you want to be X or O? ').upper()
+        try:
+            marker = input('Player 1: Do you want to be X or O? ').upper()
+            if marker == 'X' or marker == 'O':
+                break
+        except Exception as e:
+            print(e)
+            continue
+        else: 
+            print("please input a 'x' or an 'o'")
+            continue
 
     if marker == 'X':
         return ('X', 'O')
@@ -62,13 +71,31 @@ def player_choice(board):
     position = 0
     
     while position not in [1,2,3,4,5,6,7,8,9] or not space_check(board, position):
-        position = int(input('Choose your next position: (1-9) '))
+        try:
+            position = int(input('Choose your next position: (1-9) '))
+            if position in [1,2,3,4,5,6,7,8,9]:
+                break
+        except Exception as e:
+            print(e)
+            continue
+        else: 
+            print("please input a number between 1 and 9 (inclusive)")
+            continue
         
     return position
 
 def replay():
-    
-    return input('Do you want to play again? Enter Yes or No: ').lower().startswith('y')
+    while True:
+        try:
+            yn = input('Do you want to play again? Enter Yes or No: ')
+            if yn.lower() == 'y' or yn.lower() == 'n':
+                break
+        except Exception as e:
+            print(e)
+            continue
+        else: 
+            print("please input 'y' or 'n'")
+            continue
 
 print('Welcome to Tic Tac Toe!')
 
