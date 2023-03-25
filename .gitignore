@@ -7,6 +7,7 @@
 .ipynb_checkpoints/
 jupyter-notebooks-from-tutor/
 myfile.txt
+*.7z
 
 
 # Node artifact files

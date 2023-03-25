@@ -92,7 +92,7 @@ class Hand():
             str2 += str(c) 
             str2 += ' '
         str3 = str(self.score)
-        str4 = str1 + str2 + '(' + str(self.score) + ')'
+        str4 = str1 + str2 + '(score: ' + str(self.score) + ')'
         return str4
 
     def twist(self, new_card):
@@ -114,13 +114,13 @@ class Money():
     def __str__(self):
         return (f'${self.amount}')
     
-    def decrease_amount(self, val):
-        self.amount -= val    
-        print(f'player has ${self.amount}')
+    def decrease_amount(self, bet_size):
+        self.amount -= bet_size
+        print(f'player has ${self.amount}, bet per game is ${bet_size}')
 
-    def increase_amount(self, val):
-        self.amount += val
-        print(f'player has ${self.amount}')
+    def increase_amount(self, bet_size):
+        self.amount += bet_size
+        print(f'player has ${self.amount}, bet per game is ${bet_size}')
 
 
 def human_play_blackjack(hand, deck):
@@ -171,12 +171,13 @@ def check_for_two_card_21(hand):
 if __name__ == '__main__':
     # player's money
     player_money = Money(10)
-    print(f'player has {player_money.amount}')
     bet_per_game = 2
 
     # keep playing games of blackjack loop
     play_again_loop = True
     while play_again_loop == True:
+        print("let's play blackjack! Dealer hits until 17. Aces count as 1 or 11")
+        print(f'player has ${player_money.amount}, bet per game is ${bet_per_game}')
         # get a deck of cards and shuffle it
         deck = Deck()
         random.shuffle(deck.full_deck)
