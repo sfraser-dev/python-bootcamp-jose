@@ -79,15 +79,15 @@ class Card():
 class Hand():
     def __init__(self, owner, card1, card2) -> None:
         self.owner = owner
-        self.hand = [card1, card2]
+        self.the_cards = [card1, card2]
         self.total = 0
-        for c in self.hand:
+        for c in self.the_cards:
             self.total += c.simple_strength_value
 
     def __str__(self):
         str1 = (f'{self.owner}: ')
         str2=''
-        for c in self.hand:
+        for c in self.the_cards:
             str2 += str(c) 
             str2 += ' '
         str3 = str(self.total)
@@ -95,8 +95,8 @@ class Hand():
         return str4
 
     def twist(self, new_card):
-        self.new_card = new_card
-
+        self.the_cards.append(new_card)
+        self.total += new_card.simple_strength_value
 
 class Money():
     def __init__(self, amount) -> None:
@@ -110,6 +110,32 @@ class Money():
     
     def set_money(self, val):
         self.amount = val
+
+def lets_play_blackjack(hand, deck):
+    print(hand)
+    your_turn = True
+    while your_turn:
+        # get user choice to stick or twist
+        while True:
+            try:
+                stick_or_twist = input("stick 's' or twist 't'? ")
+                if stick_or_twist == 's' or stick_or_twist == 't': 
+                    break
+                else:
+                    print("input either 's' to stick or 't' to twist")
+                    continue
+            except:
+                print("input either 's' to stick or 't' to twist")
+                continue
+        if stick_or_twist == 's':
+            print(f'{hand.owner} total is: {hand.total}')
+            return
+        else:
+            new_card = deck.full_deck.pop()
+            hand.twist(new_card)
+            print(hand)
+            continue
+
     
 if __name__ == '__main__':
     # get a deck of cards and shuffle it
@@ -126,26 +152,13 @@ if __name__ == '__main__':
     player_hand = Hand('player', card_one, card_three)
     dealer_hand = Hand('dealer', card_two, card_four)
     print(player_hand)
-    print(f'dealer: {dealer_hand.hand[0]} XX')
+    print(f'dealer: {dealer_hand.the_cards[0]} XX')
 
     # player's money
     money = Money(20)
     print(f'player money: ${money.get_money()}')
+    print('')
 
-    lets_play_blackjack = True
-    while lets_play_blackjack == True:
-        # get user choice to stick or twist
-        while True:
-            try:
-                stick_or_twist = input("stick 's' or twist 't'? ")
-                if stick_or_twist == 's' or stick_or_twist == 't': 
-                    break
-                else:
-                    print("input either 's' to stick or 't' to twist")
-                    continue
-            except:
-                print("input either 's' to stick or 't' to twist")
-                continue
-        break
+    lets_play_blackjack(player_hand, deck)
 
 
