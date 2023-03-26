@@ -1,4 +1,0 @@
-ctrl-;   run
-ctrl-#   toggle between vscode terminal and vscode editor
-ctrl-'   toggle vscode terminal open/closed
-ctrl-£   kill vscode terminal (when stuck)
